@@ -1,4 +1,4 @@
-module github.com/ninnemana/kafka-health-service
+module github.com/ninnemana/kafka-http-health-check
 
 go 1.19
 
