@@ -128,6 +128,8 @@ var noBrokersErr = errors.New("no brokers found")
 func (w *worker) check(localIP string) error {
     var status bool
     defer func(v bool) {
+        w.log.Info("setting status", zap.Bool("up", v))
+        
         w.Lock()
         w.up = v
         w.Unlock()
