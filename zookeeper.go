@@ -129,7 +129,7 @@ func (w *worker) check(localIP string) error {
     var status bool
     defer func(v bool) {
         w.log.Info("setting status", zap.Bool("up", v))
-        
+
         w.Lock()
         w.up = v
         w.Unlock()
@@ -168,6 +168,7 @@ func (w *worker) check(localIP string) error {
             w.log.Info("comparing with local IP", zap.String("endpoint", e), zap.String("local", localIP))
 
             if strings.Contains(e, localIP) {
+                w.log.Info("broker matches local IP", zap.String("endpoint", e), zap.String("local", localIP))
                 status = true
                 return nil
             }
