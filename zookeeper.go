@@ -112,19 +112,21 @@ func (w *worker) work(ctx context.Context) error {
 }
 
 func (w *worker) check() error {
+    var status bool
+    defer func(v bool) {
+        w.Lock()
+        w.up = v
+        w.Unlock()
+    }(status)
+
     children, _, err := w.client.Children("/brokers/ids")
     if err != nil {
         return fmt.Errorf("failed to get broker list: %w", err)
     }
 
-    var up bool
     if len(children) > 0 {
-        up = true
+        status = true
     }
-
-    w.Lock()
-    w.up = up
-    w.Unlock()
-
+    
     return nil
 }
