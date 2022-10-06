@@ -1,4 +1,4 @@
-module github.com/fubotv/kafka-health-service
+module github.com/ninnemana/kafka-health-service
 
 go 1.19
 
