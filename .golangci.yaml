@@ -91,13 +91,13 @@ linters-settings:
     statements: 40
 
   goimports:
-    local-prefixes: github.com/fubotv/
+    local-prefixes: github.com/ninnemana
 
   gci:
     # https://fubotv.atlassian.net/wiki/spaces/VID/pages/26804225/Vid-IO+Postulations+Style+Guide
     sections:
       - standard
-      - prefix(github.com/fubotv)
+      - prefix(github.com/ninnemana)
       - default
     skip-generated: false
     custom-order: true
