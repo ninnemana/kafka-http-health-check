@@ -124,9 +124,10 @@ func (w *worker) check() error {
         return fmt.Errorf("failed to get broker list: %w", err)
     }
 
+    w.log.Info("fetched brokers", zap.Int("count", len(children)))
     if len(children) > 0 {
         status = true
     }
-    
+
     return nil
 }
