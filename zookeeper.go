@@ -23,6 +23,7 @@ var (
 
 	zkAddrs    = flag.String("zk-addr", "127.0.0.1", "list of zookeeper instances to connect")
 	serverPort = flag.String("http-port", "8080", "HTTP port to serve status on")
+	localIP    = flag.String("local-ip", "", "IP address to match on")
 )
 
 func main() {
@@ -101,10 +102,11 @@ func (w *worker) work(ctx context.Context) error {
 	}
 	defer conn.Close()
 
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-
 	for {
-		if err := w.check(localAddr.IP.String()); err != nil {
+		if err := w.check(
+			conn.LocalAddr().(*net.UDPAddr).IP.String(),
+			conn.RemoteAddr().(*net.UDPAddr).IP.String(),
+		); err != nil {
 			w.log.Error("zookeeper query failed", zap.Error(err))
 			continue
 		}
@@ -125,7 +127,7 @@ func (w *worker) work(ctx context.Context) error {
 
 var noBrokersErr = errors.New("no brokers found")
 
-func (w *worker) check(localIP string) error {
+func (w *worker) check(addresses ...string) error {
 	var status bool
 	defer func() {
 		w.log.Info("setting status", zap.Bool("up", status))
@@ -165,12 +167,14 @@ func (w *worker) check(localIP string) error {
 		w.log.Info("fetching broker", zap.Strings("endpoints", b.Endpoints))
 
 		for _, e := range b.Endpoints {
-			w.log.Info("comparing with local IP", zap.String("endpoint", e), zap.String("local", localIP))
+			for _, ip := range addresses {
+				w.log.Info("comparing with IP", zap.String("endpoint", e), zap.String("local", ip))
 
-			if strings.Contains(e, localIP) {
-				w.log.Info("broker matches local IP", zap.String("endpoint", e), zap.String("local", localIP))
-				status = true
-				return nil
+				if strings.Contains(e, ip) {
+					w.log.Info("broker matches IP", zap.String("endpoint", e), zap.String("local", ip))
+					status = true
+					return nil
+				}
 			}
 		}
 	}
