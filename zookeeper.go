@@ -21,8 +21,9 @@ var (
 	CheckInterval      = time.Second * 1
 	DefaultHTTPTimeout = time.Second * 5
 
-	zkAddrs    = flag.String("zk-addr", "127.0.0.1", "list of zookeeper instances to connect")
-	serverPort = flag.String("http-port", "8080", "HTTP port to serve status on")
+	zkAddrs      = flag.String("zk-addr", "127.0.0.1", "list of zookeeper instances to connect")
+	serverPort   = flag.String("http-port", "8080", "HTTP port to serve status on")
+	additionalIP = flag.String("local-ip", "", "IP address to match on")
 )
 
 func main() {
@@ -104,7 +105,7 @@ func (w *worker) work(ctx context.Context) error {
 	for {
 		if err := w.check(
 			conn.LocalAddr().(*net.UDPAddr).IP.String(),
-			conn.RemoteAddr().(*net.UDPAddr).IP.String(),
+			*additionalIP,
 		); err != nil {
 			w.log.Error("zookeeper query failed", zap.Error(err))
 			continue
