@@ -23,7 +23,6 @@ var (
 
 	zkAddrs    = flag.String("zk-addr", "127.0.0.1", "list of zookeeper instances to connect")
 	serverPort = flag.String("http-port", "8080", "HTTP port to serve status on")
-	localIP    = flag.String("local-ip", "", "IP address to match on")
 )
 
 func main() {
